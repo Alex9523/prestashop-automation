@@ -39,8 +39,8 @@ public class MainPage {
         PageFactory.initElements(webDriver, this);
     }
 
-    public void getTextSearchCurency(){
-        searchCurency.getText();
+    public String getTextSearchCurency(){
+        return searchCurency.getText();
     }
 
     public void clickOnSelectCurency(){
@@ -70,7 +70,7 @@ public class MainPage {
 
 
 
-    public double[] sort(double[]dabl){//сортирую по убиванію
+    public double[] sort(double[]dabl){//sort
         double temp;
         for (int i = 0; i < dabl.length; i++) {
             for (int k = i + 1; k < dabl.length; k++) {
@@ -84,7 +84,7 @@ public class MainPage {
         return dabl;
     }
 
-    public double[] fromStringToDouble(String []str){ //перетворює стрінговий масив в масив з плаваючою точкою
+    public double[] fromStringToDouble(String []str){ //converts String[] to double[]
         double[] dbl = new double[7];
         for (int i = 0; i < 7; i++) {
             str[i]=str[i].replace(',' , '.');
@@ -93,7 +93,7 @@ public class MainPage {
         return dbl;
     }
 
-    public String[] listCurentPrices() {
+    public String[] listCurrentPrices() { // catch all current prices and lodge them into masive
         String [] allElements = new String [7] ;
         boolean bool;
         for (int x=1; x<=7; x++) {
@@ -114,25 +114,40 @@ public class MainPage {
         return allElements;
     }
 
-    public boolean compareSort(double[] first, double[] second){
+    public void compareSort(double[] first, double[] second){ //compare correct sort and current sort
+        String[] x1, y1;
         boolean bool=true;
         for(int i=0;i<first.length;i++){
             if(first[i]==second[i])
                 bool = true;
-            else bool = false;
+            else {
+                bool = false;
+                break;
+            }
+        }
+        if (bool == true)
+            System.out.println("Sort correct");
+        else  System.out.println("Sort wrong");
+    }
+
+    public boolean check(double x , double y, int percent){//check correct formula
+        double z = 100-((y*100)/x);
+        boolean bool=true;
+        int result = (int)Math.round(z);
+        try{
+            Assert.assertTrue(result==percent);
+            bool = true;
+        }
+        catch (AssertionError e){
+            bool = false;
         }
         return bool;
     }
 
-    public void check(double x , double y, int percent){
-        double z = 100-((y*100)/x);
-        int result = (int)Math.round(z);
-        Assert.assertTrue(result==percent);
-    }
-
-    public void q(String x, String y, String z){
+    public void fromStringToDouble(String x, String y, String z){ //change type for price, current-price and discount
         String[] x1, y1;
-        double x2,y2,z2;
+        double x2,y2;
+        int z2;
         x1=x.split(" ");
         y1=y.split(" ");
         x=x1[0].replace(',' , '.');
@@ -140,14 +155,16 @@ public class MainPage {
         z=z.substring(1, z.length() - 1);
         x2=Double.valueOf(x);
         y2=Double.valueOf(y);
-        z2=Double.valueOf(z);
+        z2=Integer.valueOf(z);
 
-        System.out.println(x2);
-        System.out.println(y2);
-        System.out.println(z);
+        if(check(x2,y2,z2)==true){
+            System.out.println("Discount percent correct");
+        }
+        else System.out.println("Discount percent wrong");
+
     }
 
-    public void cathDiscount() {
+    public void checkDiscount() { //catch price, curent-price and discount
         boolean bool;
         for (int x=1; x<=7; x++) {
             try {
@@ -160,7 +177,7 @@ public class MainPage {
                 String x1 = webDriver.findElement(By.xpath("//article["+ x +"]//span[@class='regular-price']")).getText();
                 String y = webDriver.findElement(By.xpath("//article["+ x +"]//span[@class='price']")).getText();
                 String z = webDriver.findElement(By.xpath("//article["+ x +"]//span[@class='discount-percentage']")).getText();
-              q(x1,y,z);
+                fromStringToDouble(x1,y,z);
             }
         }
 

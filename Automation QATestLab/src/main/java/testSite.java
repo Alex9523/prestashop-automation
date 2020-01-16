@@ -24,6 +24,7 @@ public class testSite {
 
             System.out.println("Step 1: Open web page - " + driver.getCurrentUrl());
             driver.get("http://prestashop-automation.qatestlab.com.ua/ru/");
+            System.out.println("We open web page: " + driver.getCurrentUrl());
         }
 
         @Test
@@ -47,53 +48,67 @@ public class testSite {
             checkPercent();
         }
 
-        public void checkPriceAndCurency(){ //Step 2,3
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            String valuta = driver.findElement(By.xpath("//span[@class='expand-more _gray-darker hidden-sm-down']")).getText();
+        public void checkPriceAndCurency(){ //Step 2
+            String valuta = mainPage.getTextSearchCurency();
+            boolean bool=true;
             for(int i=1;i<=7;i++) {
-                Assert.assertTrue(driver.findElement(By.xpath("//div/article["+i+"]//span[@class='price']")).getText().contains(valuta.substring(valuta.length() - 1)));
+                try {
+                    Assert.assertTrue(driver.findElement(By.xpath("//div/article[" + i + "]//span[@class='price']")).getText().contains(valuta.substring(valuta.length() - 1)));
+                }
+                catch (AssertionError e){
+                   bool = false;
+                   break;
+                }
             }
+            if(bool = true)
+                System.out.println("Checking passed");
+            else  System.out.println("Checking false");
         }
 
         public void changeCurrencyToUSD(){//step 3
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             mainPage.clickOnDropDownMenuCurency();
             mainPage.clickOnSelectCurency();
+            System.out.println("We change currency to USD");
         }
 
         public void searchDress(){//step 4
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             mainPage.searchFor("dress");
+            System.out.println("We search 'dress' in search field");
         }
 
         public void checkArticle(){//step 5
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             String article = mainPage.q();
             int count = driver.findElements(By.xpath("//div/article")).size();
+            try{
             Assert.assertTrue(article.contains("Товаров: "+count+"."));
+                System.out.println("The search result contains 'Товаров: Х'");
+            }
+            catch (AssertionError e){
+                System.out.println("The search result don't contains 'Товаров: Х'");
+            }
         }
 
+
         public void selectSort(){//step 7
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
             mainPage.clickDropDownMenu();
             mainPage.selectFromHighToLow();
+            System.out.println("Select sort by descending");
         }
 
         public void checkSort(){ // Step 8
-            driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            String[] st = mainPage.listCurentPrices(); //
+            String[] st = mainPage.listCurrentPrices(); //
             double [] dbl = mainPage.fromStringToDouble(st);
             double [] corect = mainPage.sort(dbl);
-            boolean q = mainPage.compareSort(corect,dbl);
+            mainPage.compareSort(corect,dbl);
             }
 
-        public void checkPercent(){
-            mainPage.cathDiscount();
+        public void checkPercent(){ //Step 9-10
+            mainPage.checkDiscount();
         }
 
-        /*@After
+        @After
         public void cleanUp(){
             if(driver != null)
                 driver.quit();
-        }*/
+        }
 }
