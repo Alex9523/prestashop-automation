@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.sql.Driver;
 import java.util.List;
@@ -13,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 public class testSite {
     WebDriver driver;
-    MainPage mainPage;
+    MainPage mainPage ;
 
-        @Before
+       @Before
         public void set(){
             System.setProperty("webdriver.chrome.driver", "C:/Users/Alex/Downloads/chromedriver_win32/chromedriver.exe");
             driver = new ChromeDriver();
@@ -36,7 +38,7 @@ public class testSite {
             changeCurrencyToUSD();
             System.out.println("Step 4: Search 'dress'.");
             searchDress();
-            System.out.println("Step 5: Check title 'Товаров: Ч' .");
+            System.out.println("Step 5: The search result contains 'Товаров: Х' .");
             checkArticle();
             System.out.println("Step 6: Check price. ");
             checkPriceAndCurency();
@@ -68,7 +70,7 @@ public class testSite {
         public void changeCurrencyToUSD(){//step 3
             mainPage.clickOnDropDownMenuCurency();
             mainPage.clickOnSelectCurency();
-            System.out.println("We change currency to USD");
+            System.out.println("Currency are changed to USD success");
         }
 
         public void searchDress(){//step 4
@@ -81,10 +83,10 @@ public class testSite {
             int count = driver.findElements(By.xpath("//div/article")).size();
             try{
             Assert.assertTrue(article.contains("Товаров: "+count+"."));
-                System.out.println("The search result contains 'Товаров: Х'");
+                System.out.println("The step passed");
             }
             catch (AssertionError e){
-                System.out.println("The search result don't contains 'Товаров: Х'");
+                System.out.println("The step failed");
             }
         }
 
